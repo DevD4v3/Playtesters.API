@@ -1,16 +1,19 @@
+using DotEnv.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Playtesters.API.Data;
 using Playtesters.API.Extensions;
+using Playtesters.API.Middlewares;
 using Playtesters.API.UseCases.Testers;
 using SimpleResults;
 
 var builder = WebApplication.CreateBuilder(args);
+new EnvLoader().Load();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerWithApiKey();
 builder.Services.AddUseCases();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=playtesters.db"));
@@ -24,11 +27,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ApiKeyMiddleware>();
 app.UseRequestLocalization("en");
 app.UseHttpsRedirection();
 
 var testerGroup = app
-    .MapGroup("/tester")
+    .MapGroup("/api/tester")
     .WithTags("Tester")
     .WithOpenApi();
 
@@ -58,7 +62,7 @@ testerGroup.MapGet("/", async ([FromServices]GetTestersUseCase useCase) =>
 })
 .Produces<ListedResult<GetTestersResponse>>();
 
-testerGroup.MapPost("/auth/validate", async (
+testerGroup.MapPost("/validate-access", async (
     [FromBody]ValidateTesterAccessRequest request,
     ValidateTesterAccessUseCase useCase) =>
 {
