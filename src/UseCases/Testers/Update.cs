@@ -6,17 +6,17 @@ using SimpleResults;
 
 namespace Playtesters.API.UseCases.Testers;
 
-public record UpdateTesterRequest(string ApiKey);
-public record UpdateTesterResponse(string UserName, string ApiKey);
+public record UpdateTesterRequest(string AccessKey);
+public record UpdateTesterResponse(string UserName, string AccessKey);
 
 public class UpdateTesterValidator 
     : AbstractValidator<UpdateTesterRequest>
 {
     public UpdateTesterValidator()
     {
-        RuleFor(t => t.ApiKey)
+        RuleFor(t => t.AccessKey)
             .Must(key => string.IsNullOrEmpty(key) || Guid.TryParse(key, out _))
-            .WithMessage("API Key must be a valid GUID.");
+            .WithMessage("Access Key must be a valid GUID.");
     }
 }
 
@@ -37,10 +37,10 @@ public class UpdateTesterUseCase(
         if (tester is null)
             return Result.NotFound();
 
-        tester.ApiKey = request.ApiKey;
+        tester.AccessKey = request.AccessKey;
         await dbContext.SaveChangesAsync();
 
-        var response = new UpdateTesterResponse(tester.UserName, tester.ApiKey);
+        var response = new UpdateTesterResponse(tester.UserName, tester.AccessKey);
         return Result.Success(response);
     }
 }

@@ -6,7 +6,7 @@ using SimpleResults;
 
 namespace Playtesters.API.UseCases.Testers;
 
-public record ValidateTesterAccessRequest(string UserName, string ApiKey);
+public record ValidateTesterAccessRequest(string UserName, string AccessKey);
 public record ValidateTesterAccessResponse(string UserName);
 
 public class ValidateTesterAccessValidator 
@@ -18,10 +18,10 @@ public class ValidateTesterAccessValidator
             .NotEmpty()
             .MinimumLength(3);
 
-        RuleFor(t => t.ApiKey)
+        RuleFor(t => t.AccessKey)
             .NotEmpty()
             .Must(key => Guid.TryParse(key, out _))
-            .WithMessage("API Key must be a valid GUID.");
+            .WithMessage("Access Key must be a valid GUID.");
     }
 }
 
@@ -40,7 +40,7 @@ public class ValidateTesterAccessUseCase(
             .Set<Tester>()
             .FirstOrDefaultAsync(t => t.UserName == request.UserName);
 
-        if (tester is null || tester.ApiKey != request.ApiKey)
+        if (tester is null || tester.AccessKey != request.AccessKey)
             return Result.Unauthorized("Invalid credentials.");
 
         var response = new ValidateTesterAccessResponse(tester.UserName);

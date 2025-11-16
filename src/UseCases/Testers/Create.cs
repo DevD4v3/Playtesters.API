@@ -7,7 +7,7 @@ using SimpleResults;
 namespace Playtesters.API.UseCases.Testers;
 
 public record CreateTesterRequest(string UserName);
-public record CreateTesterResponse(string UserName, string ApiKey);
+public record CreateTesterResponse(string UserName, string AccessKey);
 
 public class CreateTesterValidator
     : AbstractValidator<CreateTesterRequest>
@@ -41,7 +41,7 @@ public class CreateTesterUseCase(
         {
             UserName = request.UserName
         };
-        var response = new CreateTesterResponse(request.UserName, tester.ApiKey);
+        var response = new CreateTesterResponse(request.UserName, tester.AccessKey);
         dbContext.Add(tester);
 
         await dbContext.SaveChangesAsync();
