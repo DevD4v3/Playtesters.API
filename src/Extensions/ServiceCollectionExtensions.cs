@@ -9,11 +9,13 @@ public static class ServiceCollectionExtensions
         services
             .AddScoped<CreateTesterUseCase>()
             .AddScoped<UpdateTesterUseCase>()
-            .AddScoped<GetTestersUseCase>();
+            .AddScoped<GetTestersUseCase>()
+            .AddScoped<ValidateTesterAccessUseCase>();
 
         services
             .AddSingleton<CreateTesterValidator>()
-            .AddSingleton<UpdateTesterValidator>();
+            .AddSingleton<UpdateTesterValidator>()
+            .AddSingleton<ValidateTesterAccessValidator>();
 
         return services;
     }

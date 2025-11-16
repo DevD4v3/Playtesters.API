@@ -28,8 +28,8 @@ app.UseRequestLocalization("en");
 app.UseHttpsRedirection();
 
 var testerGroup = app
-    .MapGroup("/Testers")
-    .WithTags("Testers")
+    .MapGroup("/tester")
+    .WithTags("Tester")
     .WithOpenApi();
 
 testerGroup.MapPost("/", async (
@@ -57,5 +57,14 @@ testerGroup.MapGet("/", async ([FromServices]GetTestersUseCase useCase) =>
     return response.ToHttpResult();
 })
 .Produces<ListedResult<GetTestersResponse>>();
+
+testerGroup.MapPost("/auth/validate", async (
+    [FromBody]ValidateTesterAccessRequest request,
+    ValidateTesterAccessUseCase useCase) =>
+{
+    var response = await useCase.ExecuteAsync(request);
+    return response.ToHttpResult();
+})
+.Produces<Result<ValidateTesterAccessResponse>>();
 
 app.Run();
