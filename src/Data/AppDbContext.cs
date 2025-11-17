@@ -8,10 +8,17 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Tester>()
+        modelBuilder
+            .Entity<Tester>()
             .HasIndex(t => t.Name)
             .IsUnique();
 
-        modelBuilder.Entity<AccessValidationHistory>();
+        modelBuilder
+            .Entity<AccessValidationHistory>()
+            .HasIndex(h => h.CheckedAt);
+
+        modelBuilder
+            .Entity<AccessValidationHistory>()
+            .HasIndex(h => h.IpAddress);
     }
 }
