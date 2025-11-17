@@ -6,15 +6,15 @@ using SimpleResults;
 
 namespace Playtesters.API.UseCases.Testers;
 
-public record CreateTesterRequest(string UserName);
-public record CreateTesterResponse(string UserName, string AccessKey);
+public record CreateTesterRequest(string Name);
+public record CreateTesterResponse(string Name, string AccessKey);
 
 public class CreateTesterValidator
     : AbstractValidator<CreateTesterRequest>
 {
     public CreateTesterValidator()
     {
-        RuleFor(t => t.UserName)
+        RuleFor(t => t.Name)
             .NotEmpty()
             .MinimumLength(3);
     }
@@ -32,16 +32,16 @@ public class CreateTesterUseCase(
 
         bool exists = await dbContext
             .Set<Tester>()
-            .AnyAsync(t => t.UserName == request.UserName);
+            .AnyAsync(t => t.Name == request.Name);
 
         if (exists)
             return Result.Conflict("Username already exists.");
 
         var tester = new Tester
         {
-            UserName = request.UserName
+            Name = request.Name
         };
-        var response = new CreateTesterResponse(request.UserName, tester.AccessKey);
+        var response = new CreateTesterResponse(request.Name, tester.AccessKey);
         dbContext.Add(tester);
 
         await dbContext.SaveChangesAsync();

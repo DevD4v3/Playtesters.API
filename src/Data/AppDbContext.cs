@@ -9,7 +9,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Tester>()
-            .HasIndex(t => t.UserName)
+            .HasIndex(t => t.Name)
             .IsUnique();
     }
 }

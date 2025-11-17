@@ -6,15 +6,15 @@ using SimpleResults;
 
 namespace Playtesters.API.UseCases.Testers;
 
-public record ValidateTesterAccessRequest(string UserName, string AccessKey);
-public record ValidateTesterAccessResponse(string UserName);
+public record ValidateTesterAccessRequest(string Name, string AccessKey);
+public record ValidateTesterAccessResponse(string Name);
 
 public class ValidateTesterAccessValidator 
     : AbstractValidator<ValidateTesterAccessRequest>
 {
     public ValidateTesterAccessValidator()
     {
-        RuleFor(t => t.UserName)
+        RuleFor(t => t.Name)
             .NotEmpty()
             .MinimumLength(3);
 
@@ -38,12 +38,12 @@ public class ValidateTesterAccessUseCase(
 
         var tester = await dbContext
             .Set<Tester>()
-            .FirstOrDefaultAsync(t => t.UserName == request.UserName);
+            .FirstOrDefaultAsync(t => t.Name == request.Name);
 
         if (tester is null || tester.AccessKey != request.AccessKey)
             return Result.Unauthorized("Invalid credentials.");
 
-        var response = new ValidateTesterAccessResponse(tester.UserName);
+        var response = new ValidateTesterAccessResponse(tester.Name);
         return Result.Success(response);
     }
 }

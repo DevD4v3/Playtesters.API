@@ -45,12 +45,12 @@ testerGroup.MapPost("/", async (
 })
 .Produces<Result<CreateTesterResponse>>();
 
-testerGroup.MapPut("/{userName}", async (
-    string userName, 
+testerGroup.MapPut("/{name}", async (
+    string name, 
     [FromBody]UpdateTesterRequest request, 
     UpdateTesterUseCase useCase) =>
 {
-    var response = await useCase.ExecuteAsync(userName, request);
+    var response = await useCase.ExecuteAsync(name, request);
     return response.ToHttpResult();
 })
 .Produces<Result<UpdateTesterResponse>>();
