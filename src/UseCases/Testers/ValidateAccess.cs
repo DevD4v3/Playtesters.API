@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Playtesters.API.Data;
 using Playtesters.API.Entities;
 using SimpleResults;
+using System.Net;
 
 namespace Playtesters.API.UseCases.Testers;
 
@@ -22,6 +23,11 @@ public class ValidateTesterAccessValidator
             .NotEmpty()
             .Must(key => Guid.TryParse(key, out _))
             .WithMessage("Access Key must be a valid GUID.");
+
+        RuleFor(t => t.IpAddress)
+            .NotEmpty()
+            .Must(ip => IPAddress.TryParse(ip, out _))
+            .WithMessage("IpAddress must be a valid IPv4 or IPv6 address.");
     }
 }
 
