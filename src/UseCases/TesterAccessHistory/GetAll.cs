@@ -9,6 +9,8 @@ namespace Playtesters.API.UseCases.TesterAccessHistory;
 public record GetAllTestersAccessHistoryRequest(
     string Name,
     string IpAddress,
+    string FromDate,
+    string ToDate,
     int PageNumber = 1,
     int PageSize = 20
 );
@@ -27,7 +29,33 @@ public class GetAllTestersAccessHistoryValidator
     {
         RuleFor(t => t.PageNumber).GreaterThan(0);
         RuleFor(t => t.PageSize).InclusiveBetween(10, 100);
+
+        RuleFor(t => t.FromDate)
+            .Must(IsValidDate)
+            .WithMessage("FromDate must follow format 'yyyy-MM-dd'");
+
+        RuleFor(t => t.ToDate)
+            .Must(IsValidDate)
+            .WithMessage("ToDate must follow format 'yyyy-MM-dd'");
+
+        RuleFor(t => t)
+            .Must(request =>
+            {
+                if (string.IsNullOrWhiteSpace(request.FromDate) ||
+                    string.IsNullOrWhiteSpace(request.ToDate))
+                    return true;
+
+                var from = DateOnly.Parse(request.FromDate);
+                var to = DateOnly.Parse(request.ToDate);
+
+                return from <= to;
+            })
+            .WithMessage("FromDate must be earlier than or equal to ToDate.");
     }
+
+    private bool IsValidDate(string value)
+        => string.IsNullOrWhiteSpace(value) || 
+        DateOnly.TryParseExact(value, format: "yyyy-MM-dd", out _);
 }
 
 public class GetAllTestersAccessHistoryUseCase(
@@ -47,10 +75,33 @@ public class GetAllTestersAccessHistoryUseCase(
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(request.Name))
+        {
             query = query.Where(h => h.Tester.Name == request.Name);
+        }
 
         if (!string.IsNullOrWhiteSpace(request.IpAddress))
+        {
             query = query.Where(h => h.IpAddress == request.IpAddress);
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.FromDate))
+        {
+            // Filter by the start date (FromDate).
+            // Normalize to midnight (00:00:00) to include all records from that day.
+            DateTime fromDate = DateTime.Parse(request.FromDate).Date;
+            query = query.Where(h => h.CheckedAt >= fromDate);
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.ToDate))
+        {
+            // Filter by the end date (ToDate).
+            // Convert the date to the last possible moment of the day (23:59:59.9999999)
+            // to ensure no records from the specified day are excluded.
+            DateTime toDate = DateOnly
+                .Parse(request.ToDate)
+                .ToDateTime(TimeOnly.MaxValue);
+            query = query.Where(h => h.CheckedAt <= toDate);
+        }
 
         int itemsToSkip = (request.PageNumber - 1) * request.PageSize;
         var testers = await query
