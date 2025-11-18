@@ -47,7 +47,7 @@ public class ValidateTesterAccessUseCase(
             .FirstOrDefaultAsync(t => t.Name == request.Name);
 
         if (tester is null || tester.AccessKey != request.AccessKey)
-            return Result.Unauthorized("Invalid credentials.");
+            return Result.Invalid("Invalid credentials.");
 
         var history = new AccessValidationHistory
         {
