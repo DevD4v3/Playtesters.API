@@ -29,13 +29,20 @@ All admin endpoints require the following header:
 ```http
 X-Api-Key: <your-admin-key>
 ```
-The admin key must be defined in your `.env` file.
+The admin key must be defined in your `.env` file:
+```.env
+API_KEY=your-admin-key
+```
 
 Only the endpoint `/api/testers/validate-access` is publicly accessible by game clients.
 
 ## 🎮Unity Integration
 
 The public `/api/testers/validate-access` endpoint can be called directly from your Unity project to validate tester access before allowing gameplay or enabling private build features.
+
+## 📘 HTTP Request Examples
+
+You can use this [Playtesters.API.http](https://github.com/DevD4v3/Playtesters.API/blob/master/src/Playtesters.API.http) file (VS Code / Rider / Visual Studio compatible) to test every endpoint of the API.
 
 ## 📄License
 
