@@ -9,7 +9,8 @@ using Playtesters.API.UseCases.Testers;
 using SimpleResults;
 
 var builder = WebApplication.CreateBuilder(args);
-new EnvLoader().Load();
+var envVars = new EnvLoader().Load();
+var dataSource = envVars["SQLITE_DATA_SOURCE"] ?? "playtesters.db";
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -17,7 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithApiKey();
 builder.Services.AddUseCases();
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=playtesters.db"));
+    options.UseSqlite($"Data Source={dataSource}"));
 
 var app = builder.Build();
 
