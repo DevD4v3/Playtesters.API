@@ -2,6 +2,7 @@ using DotEnv.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Playtesters.API.Data;
+using Playtesters.API.ExceptionHandlers;
 using Playtesters.API.Extensions;
 using Playtesters.API.Middlewares;
 using Playtesters.API.UseCases.TesterAccessHistory;
@@ -17,10 +18,12 @@ var dataSource = envVars["SQLITE_DATA_SOURCE"] ?? "playtesters.db";
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithApiKey();
 builder.Services.AddUseCases();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite($"Data Source={dataSource}"));
 
 var app = builder.Build();
+app.UseRequestLocalization("en");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -28,9 +31,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseExceptionHandler("/");
+}
 
 app.UseMiddleware<ApiKeyMiddleware>();
-app.UseRequestLocalization("en");
 app.UseHttpsRedirection();
 
 var testerGroup = app
