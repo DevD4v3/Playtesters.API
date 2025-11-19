@@ -10,6 +10,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     {
         modelBuilder
             .Entity<Tester>()
+            .Property(t => t.Name)
+            .HasColumnType("TEXT COLLATE NOCASE");
+
+        modelBuilder
+            .Entity<Tester>()
             .HasIndex(t => t.Name)
             .IsUnique();
 
