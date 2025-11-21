@@ -30,6 +30,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
         modelBuilder
             .Entity<AccessValidationHistory>()
+            .Property(h => h.IpAddress)
+            .IsRequired();
+
+        modelBuilder
+            .Entity<AccessValidationHistory>()
             .HasIndex(h => h.IpAddress);
     }
 }
