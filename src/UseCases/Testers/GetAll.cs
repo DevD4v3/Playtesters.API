@@ -17,6 +17,7 @@ public class GetTestersUseCase(AppDbContext dbContext)
     public async Task<ListedResult<GetTestersResponse>> ExecuteAsync()
     {
         var testers = await dbContext.Set<Tester>()
+            .OrderByDescending(t => t.CreatedAt)
             .Select(t => new GetTestersResponse
             {
                 Name = t.Name,
