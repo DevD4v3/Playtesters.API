@@ -11,9 +11,6 @@
 *.sln.docstates
 *.env
 
-# Migration files
-Migrations/
-
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
