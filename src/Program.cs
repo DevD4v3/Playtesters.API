@@ -23,6 +23,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite($"Data Source={dataSource}"));
 
 var app = builder.Build();
+await app.MigrateDatabaseAsync();
 app.UseRequestLocalization("en");
 
 // Configure the HTTP request pipeline.
