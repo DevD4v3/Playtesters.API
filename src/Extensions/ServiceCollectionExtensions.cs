@@ -18,6 +18,11 @@ public static class ServiceCollectionExtensions
 
         services.AddHttpContextAccessor();
         services.AddScoped<IClientIpProvider, ClientIpProvider>();
+        services
+            .AddHttpClient<IIpGeoLocationService, IpGeoLocationService>(httpClient =>
+            {
+                httpClient.Timeout = TimeSpan.FromSeconds(5);
+            });
 
         services
             .AddSingleton<CreateTesterValidator>()
