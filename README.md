@@ -23,6 +23,56 @@ It’s designed for indie developers or small teams who need a simple way to man
 - [SimpleResults](https://github.com/DevD4v3/SimpleResults)
 - [DotEnv.Core](https://github.com/DevD4v3/dotenv.core)
 
+## 🚀 Getting Started
+
+### Running the API locally (.NET CLI)
+- Install [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
+- Navigate to the project directory:
+```bash
+cd src
+```
+- Create a `.env` file:
+```.env
+API_KEY=your-admin-key
+SQLITE_DATA_SOURCE=playtesters.db
+```
+- Run the API:
+```bash
+dotnet run
+```
+- Access the application with this URL:
+```
+http://localhost:5183/swagger
+```
+
+### Running with Docker
+
+- Build the Docker image from the root of the repo:
+```bash
+docker build -t playtesters-api .
+```
+- Run the container without persistence (only for testing):
+```bash
+docker run -p 5183:8080 --env-file .env playtesters-api
+```
+
+If you want the `playtesters.db` file to persist across restarts:
+- Run the container with a mounted volume:
+```bash
+docker run \
+  -p 5183:8080 \
+  --env-file .env \
+  -v playtesters_data:/app/data \
+  playtesters-api
+```
+- Make sure your connection string points to:
+```bash
+SQLITE_DATA_SOURCE=/app/data/playtesters.db
+```
+When the application starts, EF Core automatically applies the migrations and creates the SQLite database (along with its schema) inside the path `/app/data`.
+This is important because the database file is generated at runtime, meaning the container writes it into the mounted volume.
+By doing this, the volume does not overwrite the database path with an empty directory — instead, it simply persists the file that the app creates.
+
 ## 🔐Authentication
 
 All admin endpoints require the following header:
