@@ -9,6 +9,7 @@ namespace Playtesters.API.UseCases.TesterAccessHistory;
 public record GetAllTestersAccessHistoryRequest(
     string Name,
     string IpAddress,
+    string Country,
     string FromDate,
     string ToDate,
     int PageNumber = 1,
@@ -20,6 +21,8 @@ public class GetAllTestersAccessHistoryResponse
     public required string Name { get; init; }
     public required string CheckedAt { get; init; }
     public required string IpAddress { get; init; }
+    public required string Country { get; init; }
+    public required string City { get; init; }
 }
 
 public class GetAllTestersAccessHistoryValidator 
@@ -84,6 +87,11 @@ public class GetAllTestersAccessHistoryUseCase(
             query = query.Where(h => h.IpAddress == request.IpAddress);
         }
 
+        if (!string.IsNullOrWhiteSpace(request.Country))
+        {
+            query = query.Where(h => h.Country == request.Country);
+        }
+
         if (!string.IsNullOrWhiteSpace(request.FromDate))
         {
             // Filter by the start date (FromDate).
@@ -111,6 +119,8 @@ public class GetAllTestersAccessHistoryUseCase(
                 Name = h.Tester.Name,
                 CheckedAt = h.CheckedAt.ToString("yyyy-MM-dd HH:mm:ss"),
                 IpAddress = h.IpAddress,
+                Country = h.Country,
+                City = h.City
             })
             .Skip(itemsToSkip)
             .Take(request.PageSize) 
