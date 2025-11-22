@@ -2,6 +2,7 @@
 using Playtesters.API.Data;
 using Playtesters.API.Entities;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Playtesters.API.Services;
 
@@ -20,7 +21,11 @@ public class IpGeoLocationService(
     HttpClient httpClient,
     ILogger<IpGeoLocationService> logger) : IIpGeoLocationService
 {
-    private record IpApiResponse(string Status, string Country, string City);
+    private record IpApiResponse(
+        [property: JsonPropertyName("status")]string Status,
+        [property: JsonPropertyName("country")]string Country,
+        [property: JsonPropertyName("city")]string City
+    );
 
     public async Task<GeoLocationResponse> GetLocationAsync(string ipAddress)
     {
