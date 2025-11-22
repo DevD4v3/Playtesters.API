@@ -9,5 +9,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     {
         modelBuilder.ApplyConfiguration(new TesterConfiguration());
         modelBuilder.ApplyConfiguration(new AccessHistoryConfiguration());
+        modelBuilder.ApplyConfiguration(new IpGeoCacheConfiguration());
     }
 }

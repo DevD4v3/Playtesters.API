@@ -1,12 +1,9 @@
 ﻿namespace Playtesters.API.Entities;
 
-public class AccessValidationHistory
+public class IpGeoCache
 {
     public int Id { get; set; }
-    public int TesterId { get; set; }
-    public DateTime CheckedAt { get; set; } = DateTime.UtcNow;
     public string IpAddress { get; set; } = string.Empty;
     public string Country { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
-    public Tester Tester { get; set; }
 }

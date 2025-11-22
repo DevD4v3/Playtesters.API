@@ -25,7 +25,8 @@ public class ValidateTesterAccessValidator
 public class ValidateTesterAccessUseCase(
     AppDbContext dbContext,
     ValidateTesterAccessValidator validator,
-    IClientIpProvider clientIpProvider)
+    IClientIpProvider clientIpProvider,
+    IIpGeoLocationService ipGeoLocationService)
 {
     public async Task<Result<ValidateTesterAccessResponse>> ExecuteAsync(
         ValidateTesterAccessRequest request)
@@ -41,12 +42,16 @@ public class ValidateTesterAccessUseCase(
         if (tester is null)
             return Result.Invalid("Invalid credentials.");
 
-        var history = new AccessValidationHistory
+        var ipAddress = clientIpProvider.GetClientIp();
+        var location = await ipGeoLocationService.GetLocationAsync(ipAddress);
+        var accessHistory = new AccessValidationHistory
         {
             TesterId = tester.Id,
-            IpAddress = clientIpProvider.GetClientIp()
+            IpAddress = ipAddress,
+            Country = location.Country,
+            City = location.City
         };
-        dbContext.Add(history);
+        dbContext.Add(accessHistory);
         await dbContext.SaveChangesAsync();
 
         var response = new ValidateTesterAccessResponse(tester.Name);
