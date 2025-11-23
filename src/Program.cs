@@ -99,3 +99,5 @@ testerGroup.MapPut("/revoke-all-keys", async (
 .Produces<Result<RevokeAllKeysResponse>>();
 
 app.Run();
+
+public partial class Program { }
