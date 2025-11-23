@@ -1,0 +1,23 @@
+name: Playtesters.API.CI
+
+on: 
+  push:
+    branches: 
+      - master
+  pull_request:
+    branches:
+      - master
+env:
+  DOTNET_VERSION: '8.x'
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - name: Setup .NET ${{ env.DOTNET_VERSION }}
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    - name: Execute tests
+      run: dotnet test ./tests/Playtesters.API.Tests/Playtesters.API.Tests.csproj -c Release
