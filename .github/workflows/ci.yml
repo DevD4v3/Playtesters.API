@@ -20,4 +20,4 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Execute tests
-      run: dotnet test ./tests/Playtesters.API.Tests/Playtesters.API.Tests.csproj -c Release
+      run: dotnet test ./tests/Playtesters.API.Tests.csproj -c Release
