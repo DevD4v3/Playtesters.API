@@ -18,7 +18,12 @@ X-Api-Key: {{adminKey}}
 
 ### ---------------------------------------------------------
 ### UPDATE TESTER (by name)
-### PUT /api/testers/{name}
+### PATCH /api/testers/{name}
+###
+### This endpoint allows partial updates to a tester:
+### - "accessKey": null   => do not modify the current AccessKey
+### - "accessKey": ""     => revoke the AccessKey (sets it to null)
+### - "accessKey": GUID   => update to a valid GUID
 ### ---------------------------------------------------------
 
 PATCH {{host}}/api/testers/Tester123
@@ -26,7 +31,7 @@ Content-Type: application/json
 X-Api-Key: {{adminKey}}
 
 {
-  "accessKey": ""   // null or empty = revoke
+  "accessKey": ""   // empty = revoke
 }
 
 ###
