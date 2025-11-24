@@ -97,6 +97,70 @@ public class UpdateTesterApiTests : TestBase
     }
 
     [Test]
+    public async Task Patch_WhenAccessKeyIsEmpty_ShouldRevokeKey()
+    {
+        // Arrange
+        var client = CreateHttpClientWithApiKey();
+        var createRequest = new CreateTesterRequest(Name: "Lucia");
+        await client.PostAsJsonAsync("/api/testers", createRequest);
+
+        var initialKey = Guid.NewGuid().ToString();
+        var assignRequest = new UpdateTesterRequest(AccessKey: initialKey);
+        await client.PatchAsJsonAsync("/api/testers/Lucia", assignRequest);
+
+        var revokeRequest = new UpdateTesterRequest(AccessKey: string.Empty);
+        var expectedName = "Lucia";
+
+        // Act
+        var response = await client.PatchAsJsonAsync("/api/testers/Lucia", revokeRequest);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var body = await response.Content.ReadFromJsonAsync<Result<UpdateTesterResponse>>();
+        body.Should().NotBeNull();
+        body.IsSuccess.Should().BeTrue();
+        body.Data.Name.Should().Be(expectedName);
+        body.Data.AccessKey.Should().BeNull();
+
+        var tester = await FirstOrDefaultAsync<Tester>(t => t.Name == expectedName);
+        tester.Should().NotBeNull();
+        tester.AccessKey.Should().BeNull();
+    }
+
+    [Test]
+    public async Task Patch_WhenAccessKeyIsNull_ShouldNotModifyExistingKey()
+    {
+        // Arrange
+        var client = CreateHttpClientWithApiKey();
+        var createRequest = new CreateTesterRequest(Name: "Ana");
+        await client.PostAsJsonAsync("/api/testers", createRequest);
+
+        var initialKey = Guid.NewGuid().ToString();
+        var assignRequest = new UpdateTesterRequest(AccessKey: initialKey);
+        await client.PatchAsJsonAsync("/api/testers/Ana", assignRequest);
+
+        var noChangeRequest = new UpdateTesterRequest(AccessKey: null);
+        var expectedName = "Ana";
+
+        // Act
+        var response = await client.PatchAsJsonAsync("/api/testers/Ana", noChangeRequest);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var body = await response.Content.ReadFromJsonAsync<Result<UpdateTesterResponse>>();
+        body.Should().NotBeNull();
+        body.IsSuccess.Should().BeTrue();
+        body.Data.Name.Should().Be(expectedName);
+        body.Data.AccessKey.Should().Be(initialKey);
+
+        var tester = await FirstOrDefaultAsync<Tester>(t => t.Name == expectedName);
+        tester.Should().NotBeNull();
+        tester.AccessKey.Should().Be(initialKey);
+    }
+
+    [Test]
     public async Task Patch_WhenMissingApiKey_ShouldReturnUnauthorized()
     {
         // Arrange

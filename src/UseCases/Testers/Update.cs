@@ -16,7 +16,7 @@ public class UpdateTesterValidator
     {
         RuleFor(t => t.AccessKey)
             .Must(key => string.IsNullOrEmpty(key) || Guid.TryParse(key, out _))
-            .WithMessage("Access Key must be a valid GUID.");
+            .WithMessage("AccessKey must be null, empty (to revoke) or a valid GUID.");
     }
 }
 
@@ -37,7 +37,13 @@ public class UpdateTesterUseCase(
         if (tester is null)
             return Result.NotFound();
 
-        tester.AccessKey = request.AccessKey;
+        if (request.AccessKey is not null)
+        {
+            tester.AccessKey = string.IsNullOrEmpty(request.AccessKey)
+                ? null 
+                : request.AccessKey;
+        }
+
         await dbContext.SaveChangesAsync();
 
         var response = new UpdateTesterResponse(tester.Name, tester.AccessKey);
