@@ -36,7 +36,7 @@ public class GetTestersApiTests : TestBase
     }
 
     [Test]
-    public async Task Get_WhenTesterHasPlaytime_ShouldReturnFormattedPlaytime()
+    public async Task Get_WhenTesterHasPlaytime_ShouldReturnTotalHoursPlayed()
     {
         // Arrange
         var client = CreateHttpClientWithApiKey();
@@ -45,11 +45,10 @@ public class GetTestersApiTests : TestBase
         var createdBody = await createResponse.Content.ReadFromJsonAsync<Result<CreateTesterResponse>>();
         var accessKey = createdBody.Data.AccessKey;
 
-        // Update playtime (for example 2.75 hours = 02:45:00)
         var playtimeRequest = new UpdatePlaytimeRequest(HoursPlayed: 2.75);
         var requestUri = $"/api/testers/{accessKey}/playtime";
         var playtimeResponse = await client.PatchAsJsonAsync(requestUri, playtimeRequest);
-        var expectedPlaytime = "02:45:00";
+        double expectedTotalHours = 2.75f;
 
         // Act
         var response = await client.GetAsync("/api/testers");
@@ -62,7 +61,7 @@ public class GetTestersApiTests : TestBase
         body.IsSuccess.Should().BeTrue();
 
         var tester = body.Data.FirstOrDefault(t => t.Name == "Carlos");
-        tester.TotalPlaytime.Should().Be(expectedPlaytime);
+        tester.TotalHoursPlayed.Should().Be(expectedTotalHours);
     }
 
     [Test]
