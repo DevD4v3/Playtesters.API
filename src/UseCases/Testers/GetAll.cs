@@ -9,6 +9,7 @@ public class GetTestersResponse
 {
     public required string Name { get; init; }
     public required string AccessKey { get; init; }
+    public required string TotalPlaytime { get; init; }
     public required string CreatedAt { get; init; }
 }
 
@@ -22,6 +23,7 @@ public class GetTestersUseCase(AppDbContext dbContext)
             {
                 Name = t.Name,
                 AccessKey = t.AccessKey,
+                TotalPlaytime = TimeSpan.FromHours(t.TotalHoursPlayed).ToString(@"hh\:mm\:ss"),
                 CreatedAt = t.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
             })
             .ToListAsync();

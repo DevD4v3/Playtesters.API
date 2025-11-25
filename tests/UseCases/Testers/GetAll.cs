@@ -36,6 +36,36 @@ public class GetTestersApiTests : TestBase
     }
 
     [Test]
+    public async Task Get_WhenTesterHasPlaytime_ShouldReturnFormattedPlaytime()
+    {
+        // Arrange
+        var client = CreateHttpClientWithApiKey();
+        var createRequest = new CreateTesterRequest(Name: "Carlos");
+        var createResponse = await client.PostAsJsonAsync("/api/testers", createRequest);
+        var createdBody = await createResponse.Content.ReadFromJsonAsync<Result<CreateTesterResponse>>();
+        var accessKey = createdBody.Data.AccessKey;
+
+        // Update playtime (for example 2.75 hours = 02:45:00)
+        var playtimeRequest = new UpdatePlaytimeRequest(HoursPlayed: 2.75);
+        var requestUri = $"/api/testers/{accessKey}/playtime";
+        var playtimeResponse = await client.PatchAsJsonAsync(requestUri, playtimeRequest);
+        var expectedPlaytime = "02:45:00";
+
+        // Act
+        var response = await client.GetAsync("/api/testers");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var body = await response.Content.ReadFromJsonAsync<ListedResult<GetTestersResponse>>();
+        body.Should().NotBeNull();
+        body.IsSuccess.Should().BeTrue();
+
+        var tester = body.Data.FirstOrDefault(t => t.Name == "Carlos");
+        tester.TotalPlaytime.Should().Be(expectedPlaytime);
+    }
+
+    [Test]
     public async Task Get_WhenNoTestersExist_ShouldReturnEmptyList()
     {
         // Arrange
