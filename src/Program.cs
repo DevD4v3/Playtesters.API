@@ -1,14 +1,10 @@
 using DotEnv.Core;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Playtesters.API.Data;
+using Playtesters.API.Endpoints;
 using Playtesters.API.ExceptionHandlers;
 using Playtesters.API.Extensions;
 using Playtesters.API.Middlewares;
-using Playtesters.API.UseCases.TesterAccessHistory;
-using Playtesters.API.UseCases.Testers;
-using SimpleResults;
 
 var builder = WebApplication.CreateBuilder(args);
 var envVars = new EnvLoader().Load();
@@ -40,77 +36,7 @@ else
 
 app.UseMiddleware<ApiKeyMiddleware>();
 app.UseHttpsRedirection();
-
-var testerGroup = app
-    .MapGroup("/api/testers")
-    .WithTags("Tester")
-    .WithOpenApi();
-
-testerGroup.MapPost("/", async (
-    [FromBody]CreateTesterRequest request,
-    CreateTesterUseCase useCase) =>
-{
-    var response = await useCase.ExecuteAsync(request);
-    return response.ToHttpResult();
-})
-.Produces<Result<CreateTesterResponse>>();
-
-testerGroup.MapPatch("/{name}", async (
-    string name, 
-    [FromBody]UpdateTesterRequest request, 
-    UpdateTesterUseCase useCase) =>
-{
-    var response = await useCase.ExecuteAsync(name, request);
-    return response.ToHttpResult();
-})
-.Produces<Result<UpdateTesterResponse>>();
-
-testerGroup.MapPatch("/{accessKey}/playtime", async (
-    string accessKey,
-    [FromBody]UpdatePlaytimeRequest request,
-    UpdatePlaytimeUseCase useCase) =>
-{
-    var response = await useCase.ExecuteAsync(accessKey, request);
-    return response.ToHttpResult();
-})
-.Produces<Result>()
-.WithMetadata(new AllowAnonymousAttribute());
-
-testerGroup.MapGet("/", async (
-    [FromServices]GetTestersUseCase useCase) =>
-{
-    var response = await useCase.ExecuteAsync();
-    return response.ToHttpResult();
-})
-.Produces<ListedResult<GetTestersResponse>>();
-
-testerGroup.MapPost("/validate-access", async (
-    [FromBody]ValidateTesterAccessRequest request,
-    ValidateTesterAccessUseCase useCase) =>
-{
-    var response = await useCase.ExecuteAsync(request);
-    return response.ToHttpResult();
-})
-.Produces<Result<ValidateTesterAccessResponse>>()
-.WithMetadata(new AllowAnonymousAttribute());
-
-testerGroup.MapGet("/access-history", async (
-    [AsParameters]GetAllTestersAccessHistoryRequest request, 
-    GetAllTestersAccessHistoryUseCase useCase) =>
-{
-    var response = await useCase.ExecuteAsync(request);
-    return response.ToHttpResult();
-})
-.Produces<PagedResult<GetAllTestersAccessHistoryResponse>>();
-
-testerGroup.MapPut("/revoke-all-keys", async (
-    [FromServices]RevokeAllKeysUseCase useCase) =>
-{
-    var response = await useCase.ExecuteAsync();
-    return response.ToHttpResult();
-})
-.Produces<Result<RevokeAllKeysResponse>>();
-
+app.MapTesterEndpoints();
 app.Run();
 
 public partial class Program { }
