@@ -2,13 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using Playtesters.API.Data;
 using Playtesters.API.Entities;
+using Playtesters.API.Extensions;
 using Playtesters.API.Services;
 using SimpleResults;
 
 namespace Playtesters.API.UseCases.Testers;
 
 public record ValidateTesterAccessRequest(string AccessKey);
-public record ValidateTesterAccessResponse(string Name, double TotalHoursPlayed);
+public record ValidateTesterAccessResponse(
+    string Name, 
+    double TotalHoursPlayed,
+    string TotalPlaytime
+);
 
 public class ValidateTesterAccessValidator 
     : AbstractValidator<ValidateTesterAccessRequest>
@@ -54,7 +59,11 @@ public class ValidateTesterAccessUseCase(
         dbContext.Add(accessHistory);
         await dbContext.SaveChangesAsync();
 
-        var response = new ValidateTesterAccessResponse(tester.Name, tester.TotalHoursPlayed);
+        var response = new ValidateTesterAccessResponse(
+            Name: tester.Name, 
+            tester.TotalHoursPlayed,
+            tester.TotalHoursPlayed.ToHhMmSs()
+        );
         return Result.Success(response);
     }
 }
