@@ -6,5 +6,6 @@
 .github/
 .apache/
 sql/
+assets/
 services/
 tests/
