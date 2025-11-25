@@ -49,6 +49,10 @@ X-Api-Key: {{adminKey}}
 ### ---------------------------------------------------------
 ### VALIDATE ACCESS (Public)
 ### POST /api/testers/validate-access
+###
+### This endpoint checks whether a given tester's access key is valid.
+### - If the key is valid, it returns the tester's name. 
+### - If the key is invalid or missing, it returns an error message.
 ### ---------------------------------------------------------
 
 POST {{host}}/api/testers/validate-access
@@ -62,14 +66,21 @@ Content-Type: application/json
 
 ### ---------------------------------------------------------
 ### UPDATE PLAYTIME (Public)
-### POST /api/testers/{accessKey}/playtime
+### PATCH /api/testers/{accessKey}/playtime
+###
+### Updates the total hours played for a tester.
+### This endpoint is public and should be called by the Unity client
+### to report how long the tester has been playing.
+### The accessKey uniquely identifies the tester and must be provided
+### in the URL path. The request increments the stored TotalHoursPlayed
+### by the given value in hours (double).
 ### ---------------------------------------------------------
 
-POST {{host}}/api/testers/{accessKey}/playtime
+PATCH {{host}}/api/testers/{accessKey}/playtime
 Content-Type: application/json
 
 {
-  "hoursPlayed": "some-value-here"
+  "hoursPlayed": "1.5"
 }
 
 ###
@@ -98,6 +109,7 @@ X-Api-Key: {{adminKey}}
 ### ---------------------------------------------------------
 ### REVOKE ALL KEYS
 ### PUT /api/testers/revoke-all-keys
+###
 ### This endpoint revokes the AccessKey for all testers.
 ### - Idempotent: calling it multiple times has the same effect.
 ### - After calling it, all testers will have AccessKey = null.
