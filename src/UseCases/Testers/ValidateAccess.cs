@@ -8,7 +8,7 @@ using SimpleResults;
 namespace Playtesters.API.UseCases.Testers;
 
 public record ValidateTesterAccessRequest(string AccessKey);
-public record ValidateTesterAccessResponse(string Name);
+public record ValidateTesterAccessResponse(string Name, double TotalHoursPlayed);
 
 public class ValidateTesterAccessValidator 
     : AbstractValidator<ValidateTesterAccessRequest>
@@ -54,7 +54,7 @@ public class ValidateTesterAccessUseCase(
         dbContext.Add(accessHistory);
         await dbContext.SaveChangesAsync();
 
-        var response = new ValidateTesterAccessResponse(tester.Name);
+        var response = new ValidateTesterAccessResponse(tester.Name, tester.TotalHoursPlayed);
         return Result.Success(response);
     }
 }
