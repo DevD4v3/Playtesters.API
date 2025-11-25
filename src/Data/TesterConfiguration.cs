@@ -14,6 +14,10 @@ public class TesterConfiguration : IEntityTypeConfiguration<Tester>
             .HasColumnType("TEXT COLLATE NOCASE");
 
         builder
+            .Property(t => t.TotalHoursPlayed)
+            .IsRequired();
+
+        builder
             .HasIndex(t => t.Name)
             .IsUnique();
 
