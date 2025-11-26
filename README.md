@@ -91,6 +91,10 @@ API_KEY=your-admin-key
 
 Only the endpoint `/api/testers/validate-access` is publicly accessible for validating tester access, and `/api/testers/{accessKey}/playtime` is publicly accessible for reporting accumulated playtime.
 
+## 📘 HTTP Request Examples
+
+You can use this [Playtesters.API.http](https://github.com/DevD4v3/Playtesters.API/blob/master/src/Playtesters.API.http) file (VS Code / Rider / Visual Studio compatible) to test every endpoint of the API.
+
 ## 🎮Unity Integration
 
 - The `/api/testers/validate-access` endpoint should be called before allowing gameplay or enabling private build features to ensure the tester has valid access.
@@ -102,9 +106,28 @@ Below is a quick demonstration of how you can integrate the Playtesters API into
 
 ![Unity Playtesters Login Demo](assets/unity-login-integration-demo.gif)
 
-## 📘 HTTP Request Examples
+### Scripts
+We provide two ready-to-use scripts in `assets/unity/`:
 
-You can use this [Playtesters.API.http](https://github.com/DevD4v3/Playtesters.API/blob/master/src/Playtesters.API.http) file (VS Code / Rider / Visual Studio compatible) to test every endpoint of the API.
+1. **TesterLoginMenu.cs** – Handles tester login and access key validation.
+   - Sends the access key entered by the tester to the `/api/testers/validate-access` endpoint.
+   - Handles success and error responses from the API, including invalid keys and server errors.
+   - Implements a **cooldown mechanism** after a configurable number of failed attempts.
+   - On successful login, triggers the `PlaytimeReporter` to start reporting playtime and can load the main menu or other gameplay scenes.
+   - Fully integrates with Unity UI using `TMP_InputFields` and `TMP_Text` for user feedback.
+
+2. **PlaytimeReporter.cs** – Reports playtime increments to the backend.
+   - Sends the number of hours played **since the last report** to `/api/testers/{accessKey}/playtime`.
+   - The script **does not send the total playtime since login**, because the backend already keeps a record of total accumulated playtime. 
+	 Sending the total from the start of the session would **double-count** the time.
+   - Each report calculates the time difference from the last report (`_lastReportTime`) and updates `_lastReportTime` after sending.
+   - By default, reports are sent every 2 minutes (`_reportIntervalSeconds`), but this can be configured via the Inspector.
+   - Can be attached to a persistent GameObject (`DontDestroyOnLoad`) so it continues reporting across scenes.
+
+
+You can find them here:  
+- [TesterLoginMenu.cs](assets/unity/TesterLoginMenu.cs)  
+- [PlaytimeReporter.cs](assets/unity/PlaytimeReporter.cs)
 
 ## 📄License
 
