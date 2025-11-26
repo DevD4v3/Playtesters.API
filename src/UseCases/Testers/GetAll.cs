@@ -1,10 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Playtesters.API.Data;
 using Playtesters.API.Entities;
 using Playtesters.API.Extensions;
 using SimpleResults;
 
 namespace Playtesters.API.UseCases.Testers;
+
+public enum GetTestersOrderBy
+{
+    CreatedAtDesc,
+    CreatedAtAsc,
+    TotalHoursPlayedDesc,
+    TotalHoursPlayedAsc
+}
+
+public record GetTestersRequest(string OrderBy);
 
 public class GetTestersResponse
 {
@@ -15,12 +26,52 @@ public class GetTestersResponse
     public required string CreatedAt { get; init; }
 }
 
-public class GetTestersUseCase(AppDbContext dbContext)
+public class GetTestersValidator : AbstractValidator<GetTestersRequest>
 {
-    public async Task<ListedResult<GetTestersResponse>> ExecuteAsync()
+    private static readonly string[] s_allowed = Enum.GetNames<GetTestersOrderBy>();
+
+    public GetTestersValidator()
     {
-        var testers = await dbContext.Set<Tester>()
-            .OrderByDescending(t => t.CreatedAt)
+        RuleFor(t => t.OrderBy)
+            .Must(BeValidOrderBy)
+            .WithMessage(t =>
+                $"Invalid orderBy '{t.OrderBy}'. Allowed values: {string.Join(", ", s_allowed)}");
+    }
+
+    private bool BeValidOrderBy(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return true;
+
+        return Enum.TryParse<GetTestersOrderBy>(value, ignoreCase: true, out _);
+    }
+}
+
+public class GetTestersUseCase(
+    AppDbContext dbContext,
+    GetTestersValidator validator)
+{
+    public async Task<ListedResult<GetTestersResponse>> ExecuteAsync(GetTestersRequest request)
+    {
+        var validationResult = validator.Validate(request);
+        if (validationResult.IsFailed())
+            return validationResult.Invalid();
+
+        var orderBy = string.IsNullOrWhiteSpace(request.OrderBy) ? 
+            GetTestersOrderBy.CreatedAtDesc : 
+            Enum.Parse<GetTestersOrderBy>(request.OrderBy, ignoreCase: true);
+
+        var query = dbContext.Set<Tester>().AsQueryable();
+        query = orderBy switch
+        {
+            GetTestersOrderBy.CreatedAtAsc => query.OrderBy(t => t.CreatedAt),
+            GetTestersOrderBy.CreatedAtDesc => query.OrderByDescending(t => t.CreatedAt),
+            GetTestersOrderBy.TotalHoursPlayedAsc => query.OrderBy(t => t.TotalHoursPlayed),
+            GetTestersOrderBy.TotalHoursPlayedDesc => query.OrderByDescending(t => t.TotalHoursPlayed),
+            _ => query.OrderByDescending(t => t.CreatedAt)
+        };
+
+        var testers = await query
             .Select(t => new GetTestersResponse
             {
                 Name = t.Name,

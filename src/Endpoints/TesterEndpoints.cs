@@ -46,9 +46,10 @@ public static class TesterEndpoints
         .WithMetadata(new AllowAnonymousAttribute());
 
         testerGroup.MapGet("/", async (
+            [AsParameters]GetTestersRequest request,
             [FromServices]GetTestersUseCase useCase) =>
         {
-            var response = await useCase.ExecuteAsync();
+            var response = await useCase.ExecuteAsync(request);
             return response.ToHttpResult();
         })
         .Produces<ListedResult<GetTestersResponse>>();
