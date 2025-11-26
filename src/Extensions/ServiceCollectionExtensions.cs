@@ -30,6 +30,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<UpdateTesterValidator>()
             .AddSingleton<UpdatePlaytimeValidator>()
             .AddSingleton<ValidateTesterAccessValidator>()
+            .AddSingleton<GetTestersValidator>()
             .AddSingleton<GetAllTestersAccessHistoryValidator>();
 
         return services;
