@@ -1,10 +1,45 @@
-# 🎮Playtesters.API
+<h1 align="center">🎮 Playtesters.API</h1>
+
+<p align="center">
+  A simple and open-source playtesting backend for indie game developers.
+</p>
+
+<p align="center">
+  <a href="https://github.com/DevD4v3/Playtesters.API">
+    <img src="https://img.shields.io/badge/.NET-8.0-blue" />  
+  </a>
+  <a href="https://github.com/DevD4v3/Playtesters.API">
+    <img src="https://img.shields.io/badge/Language-C%23-purple" />
+  </a>
+  <a href="https://github.com/DevD4v3/Playtesters.API">
+    <img src="https://img.shields.io/badge/API-REST-green" />
+  </a>
+  <a href="https://github.com/DevD4v3/Playtesters.API">
+    <img src="https://img.shields.io/badge/ORM-EF%20Core-blueviolet" />
+  </a>
+  <a href="https://github.com/DevD4v3/Playtesters.API">
+    <img src="https://img.shields.io/badge/Database-SQLite-lightgrey" />
+  </a>
+  <a href="https://github.com/DevD4v3/Playtesters.API">
+    <img src="https://img.shields.io/badge/Unity-Client%20Included-black" />
+  </a>
+  <a href="https://github.com/DevD4v3/Playtesters.API">
+    <img src="https://img.shields.io/badge/License-MIT-orange" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/DevD4v3/Playtesters.API">
+    <img src="assets/logo.png" />
+  </a>
+  <br />
+</p>
 
 **Playtesters.API** is a lightweight, secure RESTful service built with **.NET 8** and **Entity Framework Core (SQLite)**.
 
 It’s designed for indie developers or small teams who need a simple way to manage **playtesters**, **access keys**, and **access validation history** for private or early-access game builds.
 
-> This project was created to support the roguelike action game I'm building with my best friend from school.
+> This API was originally created to support the roguelike action game I’m building with my best friend from school — but it has grown into a fully reusable, standalone solution.
 
 ## ✨Features
 
