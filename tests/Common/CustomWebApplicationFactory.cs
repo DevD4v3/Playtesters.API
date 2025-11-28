@@ -19,10 +19,15 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             var ipGeoLocationServiceDescriptor = services.SingleOrDefault(
                 d => d.ServiceType == typeof(IIpGeoLocationService));
 
+            var notificationServiceDescriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(INotificationService));
+
             services.Remove(clientIpProviderDescriptor);
             services.Remove(ipGeoLocationServiceDescriptor);
+            services.Remove(notificationServiceDescriptor);
             services.AddSingleton<IClientIpProvider, FakeClientIpProvider>();
             services.AddSingleton<IIpGeoLocationService, FakeIpGeoLocationService>();
+            services.AddSingleton<INotificationService, FakeNotificationService>();
         });
     }
 }

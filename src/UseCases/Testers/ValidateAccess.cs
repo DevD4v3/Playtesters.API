@@ -31,7 +31,8 @@ public class ValidateTesterAccessUseCase(
     AppDbContext dbContext,
     ValidateTesterAccessValidator validator,
     IClientIpProvider clientIpProvider,
-    IIpGeoLocationService ipGeoLocationService)
+    IIpGeoLocationService ipGeoLocationService,
+    INotificationService notificationService)
 {
     public async Task<Result<ValidateTesterAccessResponse>> ExecuteAsync(
         ValidateTesterAccessRequest request)
@@ -58,6 +59,15 @@ public class ValidateTesterAccessUseCase(
         };
         dbContext.Add(accessHistory);
         await dbContext.SaveChangesAsync();
+
+        var notificationMessage = new NotificationMessage(
+            TesterName: tester.Name,
+            IpAddress: ipAddress,
+            Country: location.Country,
+            City: location.City,
+            Timestamp: accessHistory.CheckedAt
+        );
+        await notificationService.SendAsync(notificationMessage);
 
         var response = new ValidateTesterAccessResponse(
             Name: tester.Name,

@@ -19,11 +19,7 @@ public static class ServiceCollectionExtensions
 
         services.AddHttpContextAccessor();
         services.AddScoped<IClientIpProvider, ClientIpProvider>();
-        services
-            .AddHttpClient<IIpGeoLocationService, IpGeoLocationService>(httpClient =>
-            {
-                httpClient.Timeout = TimeSpan.FromSeconds(5);
-            });
+        services.AddHttpClients();
 
         services
             .AddSingleton<CreateTesterValidator>()
@@ -32,6 +28,23 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ValidateTesterAccessValidator>()
             .AddSingleton<GetTestersValidator>()
             .AddSingleton<GetAllTestersAccessHistoryValidator>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddHttpClients(this IServiceCollection services)
+    {
+        services
+            .AddHttpClient<IIpGeoLocationService, IpGeoLocationService>(httpClient =>
+            {
+                httpClient.Timeout = TimeSpan.FromSeconds(5);
+            });
+
+        services
+            .AddHttpClient<INotificationService, NotificationService>(httpClient =>
+            {
+                httpClient.Timeout = TimeSpan.FromSeconds(5);
+            });
 
         return services;
     }
