@@ -1,4 +1,5 @@
 ﻿using DotEnv.Core;
+using Playtesters.API.Extensions;
 
 namespace Playtesters.API.Services;
 
@@ -12,6 +13,7 @@ public record NotificationMessage(
     string IpAddress, 
     string Country, 
     string City,
+    double HoursPlayed,
     DateTime Timestamp
 );
 
@@ -46,12 +48,14 @@ public class NotificationService : INotificationService
 
         var content = 
         $"""
-        🔔 *New validated access*
+        🔔 *New validated access:*
         👤 Tester: **{message.TesterName}**
         🌐 IP: `{message.IpAddress}`
         🌍 Country: {message.Country}
         🏙️ City: {message.City}
+        ⏳ Hours played: {message.HoursPlayed.ToHhMmSs()}
         ⏰ {message.Timestamp:yyyy-MM-dd HH:mm:ss}
+
         """;
 
         try

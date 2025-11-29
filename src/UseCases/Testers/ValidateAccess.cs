@@ -65,6 +65,7 @@ public class ValidateTesterAccessUseCase(
             IpAddress: ipAddress,
             Country: location.Country,
             City: location.City,
+            HoursPlayed: tester.TotalHoursPlayed,
             Timestamp: accessHistory.CheckedAt
         );
         await notificationService.SendAsync(notificationMessage);
