@@ -116,7 +116,7 @@ X-Api-Key: {{adminKey}}
 
 ### ---------------------------------------------------------
 ### REVOKE ALL KEYS
-### PUT /api/testers/revoke-all-keys
+### POST /api/testers/revoke-all-keys
 ###
 ### This endpoint revokes the AccessKey for all testers.
 ### - Idempotent: calling it multiple times has the same effect.
@@ -124,7 +124,7 @@ X-Api-Key: {{adminKey}}
 ### - No body is required.
 ### ---------------------------------------------------------
 
-PUT {{host}}/api/testers/revoke-all-keys
+POST {{host}}/api/testers/revoke-all-keys
 Content-Type: application/json
 X-Api-Key: {{adminKey}}
 

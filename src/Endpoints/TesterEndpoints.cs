@@ -73,7 +73,7 @@ public static class TesterEndpoints
         })
         .Produces<PagedResult<GetAllTestersAccessHistoryResponse>>();
 
-        testerGroup.MapPut("/revoke-all-keys", async (
+        testerGroup.MapPost("/revoke-all-keys", async (
             [FromServices]RevokeAllKeysUseCase useCase) =>
         {
             var response = await useCase.ExecuteAsync();

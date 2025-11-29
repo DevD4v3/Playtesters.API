@@ -10,7 +10,7 @@ namespace Playtesters.API.Tests.UseCases.Testers;
 public class RevokeAllKeysApiTests : TestBase
 {
     [Test]
-    public async Task Put_WhenTestersExist_ShouldRevokeAllKeys()
+    public async Task Post_WhenTestersExist_ShouldRevokeAllKeys()
     {
         // Arrange
         var client = CreateHttpClientWithApiKey();
@@ -22,7 +22,7 @@ public class RevokeAllKeysApiTests : TestBase
         }
 
         // Act
-        var response = await client.PutAsJsonAsync("/api/testers/revoke-all-keys", new { });
+        var response = await client.PostAsJsonAsync("/api/testers/revoke-all-keys", new { });
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -37,13 +37,13 @@ public class RevokeAllKeysApiTests : TestBase
     }
 
     [Test]
-    public async Task Put_WhenNoTestersExist_ShouldReturnZeroRevoked()
+    public async Task Post_WhenNoTestersExist_ShouldReturnZeroRevoked()
     {
         // Arrange
         var client = CreateHttpClientWithApiKey();
 
         // Act
-        var response = await client.PutAsJsonAsync("/api/testers/revoke-all-keys", new { });
+        var response = await client.PostAsJsonAsync("/api/testers/revoke-all-keys", new { });
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -55,13 +55,13 @@ public class RevokeAllKeysApiTests : TestBase
     }
 
     [Test]
-    public async Task Put_WhenMissingApiKey_ShouldReturnUnauthorized()
+    public async Task Post_WhenMissingApiKey_ShouldReturnUnauthorized()
     {
         // Arrange
         var client = ApplicationFactory.CreateClient();
 
         // Act
-        var response = await client.PutAsJsonAsync("/api/testers/revoke-all-keys", new { });
+        var response = await client.PostAsJsonAsync("/api/testers/revoke-all-keys", new { });
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
