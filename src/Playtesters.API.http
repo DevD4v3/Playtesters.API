@@ -21,9 +21,15 @@ X-Api-Key: {{adminKey}}
 ### PATCH /api/testers/{name}
 ###
 ### This endpoint allows partial updates to a tester:
-### - "accessKey": null   => do not modify the current AccessKey
-### - "accessKey": ""     => revoke the AccessKey (sets it to null)
-### - "accessKey": GUID   => update to a valid GUID
+### 1. "accessKey":
+###    - null        => leave the current AccessKey unchanged
+###    - "" (empty)  => revoke the AccessKey (sets it to null)
+###    - GUID        => update AccessKey to the provided valid GUID
+###
+### 2. "name":
+###    - null        => keep the current Name unchanged
+###    - non-empty   => update the tester's Name (min length: 3)
+###    - invalid/empty/whitespace => returns 400 Bad Request
 ### ---------------------------------------------------------
 
 PATCH {{host}}/api/testers/Tester123
