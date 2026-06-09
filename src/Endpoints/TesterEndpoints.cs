@@ -34,6 +34,15 @@ public static class TesterEndpoints
         })
         .Produces<Result<UpdateTesterResponse>>();
 
+        testerGroup.MapDelete("/{name}", async (
+            string name,
+            DeleteTesterUseCase useCase) =>
+        {
+            var response = await useCase.ExecuteAsync(name);
+            return response.ToHttpResult();
+        })
+        .Produces<Result<DeleteTesterResponse>>();
+
         testerGroup.MapPatch("/{accessKey}/playtime", async (
             string accessKey,
             [FromBody]UpdatePlaytimeRequest request,

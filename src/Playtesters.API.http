@@ -48,6 +48,15 @@ X-Api-Key: {{adminKey}}
 ###
 
 ### ---------------------------------------------------------
+### DELETE TESTER (by name)
+### DELETE /api/testers/{name}
+### ---------------------------------------------------------
+DELETE {{host}}/api/testers/Tester123
+X-Api-Key: {{adminKey}}
+
+###
+
+### ---------------------------------------------------------
 ### LIST ALL TESTERS
 ### GET /api/testers
 ###
