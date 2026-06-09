@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/DevD4v3/Playtesters.API">
-    <img src="https://img.shields.io/badge/.NET-8.0-blue" />  
+    <img src="https://img.shields.io/badge/.NET-10.0-blue" />  
   </a>
   <a href="https://github.com/DevD4v3/Playtesters.API">
     <img src="https://img.shields.io/badge/Language-C%23-purple" />
@@ -35,7 +35,7 @@
   <br />
 </p>
 
-**Playtesters.API** is a lightweight, secure RESTful service built with **.NET 8** and **Entity Framework Core (SQLite)**.
+**Playtesters.API** is a lightweight, secure RESTful service built with **.NET 10** and **Entity Framework Core (SQLite)**.
 
 It’s designed for indie developers or small teams who need a simple way to manage **playtesters**, **access keys**, and **access validation history** for private or early-access game builds.
 
@@ -55,7 +55,7 @@ It’s designed for indie developers or small teams who need a simple way to man
 - Send Discord notifications via `DISCORD_WEBHOOK_URL` whenever a tester successfully validates access, allowing real-time monitoring of usage.
 
 ## 🧰Tech Stack
-- [.NET 8 (Web API)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [.NET 10 (Web API)](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 - [Entity Framework Core (SQLite)](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Sqlite)
 - [Swashbuckle (Swagger)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
 - [FluentValidation](https://github.com/FluentValidation/FluentValidation)
@@ -67,7 +67,7 @@ It’s designed for indie developers or small teams who need a simple way to man
 ## 🚀 Getting Started
 
 ### Running the API locally (.NET CLI)
-- Install [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
+- Install [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
 - Navigate to the project directory:
 ```bash
 cd src
