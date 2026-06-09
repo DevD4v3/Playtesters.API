@@ -14,6 +14,13 @@ public partial class TestBase
         return await dbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
     }
 
+    protected int Count<TEntity>() where TEntity : class
+    {
+        using var scope = ApplicationFactory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetService<AppDbContext>();
+        return dbContext.Set<TEntity>().Count();
+    }
+
     protected async Task<List<TEntity>> ToListAsync<TEntity>() where TEntity : class
     {
         using var scope = ApplicationFactory.Services.CreateScope();

@@ -11,6 +11,7 @@ public static class ServiceCollectionExtensions
         services
             .AddScoped<CreateTesterUseCase>()
             .AddScoped<UpdateTesterUseCase>()
+            .AddScoped<DeleteTesterUseCase>()
             .AddScoped<UpdatePlaytimeUseCase>()
             .AddScoped<GetTestersUseCase>()
             .AddScoped<ValidateTesterAccessUseCase>()
