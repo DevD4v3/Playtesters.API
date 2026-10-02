@@ -14,7 +14,7 @@ public class ApiKeyMiddlewareTests : TestBase
         // Arrange
         var client = ApplicationFactory.CreateClient();
         var request = new CreateTesterRequest(Name: "Tester1");
-        var expectedMessage = "Missing API Key.";
+        var expectedMessage = "Invalid API Key.";
 
         // Act
         var response = await client.PostAsJsonAsync("/api/testers", request);
