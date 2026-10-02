@@ -16,6 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithApiKey();
 builder.Services.AddServices();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddSingleton<IEnvReader>(new EnvReader(envVars));
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite($"Data Source={dataSource}"));
 

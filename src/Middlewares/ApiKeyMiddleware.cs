@@ -1,12 +1,17 @@
-﻿using DotEnv.Core;
+﻿using System.Text;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authorization;
+using DotEnv.Core;
 using SimpleResults;
-using System.Net;
 
 namespace Playtesters.API.Middlewares;
 
-public class ApiKeyMiddleware(RequestDelegate next)
+public class ApiKeyMiddleware(
+    IEnvReader envReader,
+    RequestDelegate next)
 {
+    private readonly byte[] _apiKeyBytes = Encoding.UTF8.GetBytes(envReader["API_KEY"]);
+
     public async Task InvokeAsync(HttpContext context)
     {
         var endpoint = context.GetEndpoint();
@@ -18,22 +23,25 @@ public class ApiKeyMiddleware(RequestDelegate next)
 
         if (!context.Request.Headers.TryGetValue("X-Api-Key", out var providedKey))
         {
-            var response = Result.Unauthorized("Missing API Key.");
-            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            await context.Response.WriteAsJsonAsync(response);
+            await Unauthorized(context);
             return;
         }
 
-        var envReader = new EnvReader();
-        var apiKey = envReader["API_KEY"];
-        if (!apiKey.Equals(providedKey))
+        var providedKeyBytes = Encoding.UTF8.GetBytes(providedKey.ToString());
+
+        if (!CryptographicOperations.FixedTimeEquals(_apiKeyBytes, providedKeyBytes))
         {
-            var response = Result.Unauthorized("Invalid API Key.");
-            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            await context.Response.WriteAsJsonAsync(response);
+            await Unauthorized(context);
             return;
         }
 
         await next(context);
+    }
+
+    private static async Task Unauthorized(HttpContext context)
+    {
+        Result result = Result.Unauthorized("Invalid API Key.");
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        await context.Response.WriteAsJsonAsync(result);
     }
 }
