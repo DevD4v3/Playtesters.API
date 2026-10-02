@@ -1,4 +1,6 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.OpenApi;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Playtesters.API.Extensions;
 
@@ -6,35 +8,38 @@ public static class SwaggerExtensions
 {
     public static IServiceCollection AddSwaggerWithApiKey(this IServiceCollection services)
     {
-        services.AddSwaggerGen(c =>
+        services.AddSwaggerGen(options =>
         {
-            c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
+            options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
             {
-                Description = "API Key needed to access the endpoints. X-Api-Key: Your_API_Key",
-                In = ParameterLocation.Header,
                 Name = "X-Api-Key",
                 Type = SecuritySchemeType.ApiKey,
-                Scheme = "ApiKeyScheme"
+                In = ParameterLocation.Header,
+                Description = "API key required to access protected endpoints."
             });
 
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
             {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "ApiKey"
-                        },
-                        Scheme = "ApiKeyScheme",
-                        Name = "X-Api-Key",
-                        In = ParameterLocation.Header
-                    },
-                    []
-                }
+                [new OpenApiSecuritySchemeReference("ApiKey", document)] = []
             });
+
+            options.OperationFilter<ApiKeySecurityOperationFilter>();
         });
         return services;
+    }
+
+    public class ApiKeySecurityOperationFilter : IOperationFilter
+    {
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
+        {
+            bool isAnonymous = context.ApiDescription.ActionDescriptor.EndpointMetadata
+                .OfType<AllowAnonymousAttribute>()
+                .Any();
+
+            if (isAnonymous)
+            {
+                operation.Security = [];
+            }
+        }
     }
 }
