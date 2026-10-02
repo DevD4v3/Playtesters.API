@@ -23,7 +23,7 @@ public class ApiKeyMiddleware(
 
         if (!context.Request.Headers.TryGetValue("X-Api-Key", out var providedKey))
         {
-            await Unauthorized(context);
+            await Unauthorized(context, "Missing API Key.");
             return;
         }
 
@@ -31,16 +31,16 @@ public class ApiKeyMiddleware(
 
         if (!CryptographicOperations.FixedTimeEquals(_apiKeyBytes, providedKeyBytes))
         {
-            await Unauthorized(context);
+            await Unauthorized(context, "Invalid API Key.");
             return;
         }
 
         await next(context);
     }
 
-    private static async Task Unauthorized(HttpContext context)
+    private static async Task Unauthorized(HttpContext context, string message)
     {
-        Result result = Result.Unauthorized("Invalid API Key.");
+        Result result = Result.Unauthorized(message);
         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
         await context.Response.WriteAsJsonAsync(result);
     }
