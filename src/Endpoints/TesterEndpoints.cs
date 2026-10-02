@@ -12,8 +12,7 @@ public static class TesterEndpoints
     {
         var testerGroup = app
             .MapGroup("/api/testers")
-            .WithTags("Tester")
-            .WithOpenApi();
+            .WithTags("Testers");
 
         testerGroup.MapPost("/", async (
             [FromBody]CreateTesterRequest request,
@@ -52,7 +51,7 @@ public static class TesterEndpoints
             return response.ToHttpResult();
         })
         .Produces<Result>()
-        .WithMetadata(new AllowAnonymousAttribute());
+        .AllowAnonymous();
 
         testerGroup.MapGet("/", async (
             [AsParameters]GetTestersRequest request,
@@ -71,7 +70,7 @@ public static class TesterEndpoints
             return response.ToHttpResult();
         })
         .Produces<Result<ValidateTesterAccessResponse>>()
-        .WithMetadata(new AllowAnonymousAttribute());
+        .AllowAnonymous();
 
         testerGroup.MapGet("/access-history", async (
             [AsParameters]GetAllTestersAccessHistoryRequest request,
